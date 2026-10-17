@@ -19,7 +19,7 @@ namespace block_sence_connector\observer;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Course and Module navigation observer to enforce SENCE ClaveÚnica validation.
+ * Global course and module navigation observer to enforce SENCE ClaveÚnica validation.
  *
  * @package    block_sence_connector
  * @copyright  2026 Keystone Advisors
@@ -46,21 +46,38 @@ class course_observer {
     }
 
     /**
+     * Intercept grade reports, user profile in course, activities list, etc.
+     *
+     * @param \core\event\base $event
+     */
+    public static function course_generic_event(\core\event\base $event) {
+        if (!empty($event->courseid)) {
+            self::check_sence_access((int)$event->courseid);
+        }
+    }
+
+    /**
      * Verify SENCE active session and redirect to gatekeeper page if inactive.
+     * Automatically called across all course sub-pages, tabs, grades, and modules.
      *
      * @param int $courseid
      */
     public static function check_sence_access(int $courseid) {
-        global $USER, $DB, $CFG;
+        global $USER, $DB;
+
+        if ($courseid <= 1) {
+            return;
+        }
 
         if (!isloggedin() || isguestuser() || empty($USER->id)) {
             return;
         }
 
-        // Avoid infinite loop if already on validation gatekeeper
-        if (strpos($_SERVER['REQUEST_URI'] ?? '', '/blocks/sence_connector/gatekeeper.php') !== false ||
-            strpos($_SERVER['REQUEST_URI'] ?? '', '/blocks/sence_connector/retoma.php') !== false ||
-            strpos($_SERVER['REQUEST_URI'] ?? '', '/blocks/sence_connector/error.php') !== false) {
+        // Avoid infinite loop if already on validation endpoints
+        $uri = $_SERVER['REQUEST_URI'] ?? '';
+        if (strpos($uri, '/blocks/sence_connector/gatekeeper.php') !== false ||
+            strpos($uri, '/blocks/sence_connector/retoma.php') !== false ||
+            strpos($uri, '/blocks/sence_connector/error.php') !== false) {
             return;
         }
 
@@ -69,14 +86,14 @@ class course_observer {
             return;
         }
 
-        // Teachers, managers and admins are exempt from blocking
+        // Teachers, managers and site admins are never blocked
         if (has_capability('block/sence_connector:viewreports', $context) || is_siteadmin()) {
             return;
         }
 
         // Check if course has SENCE enabled
-        $scourse = $DB->get_record('block_sence_courses', ['courseid' => $courseid]);
-        if (!$scourse || !$scourse->enabled) {
+        $scourse = $DB->get_record('block_sence_courses', ['courseid' => $courseid, 'enabled' => 1], '*', IGNORE_MULTIPLE);
+        if (!$scourse) {
             return;
         }
 

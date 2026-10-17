@@ -28,9 +28,26 @@ $observers = [
     [
         'eventname'   => '\core\event\course_viewed',
         'callback'    => '\block_sence_connector\observer\course_observer::course_viewed',
+        'priority'    => 1000,
     ],
     [
         'eventname'   => '\core\event\course_module_viewed',
         'callback'    => '\block_sence_connector\observer\course_observer::course_module_viewed',
+        'priority'    => 1000,
+    ],
+    [
+        'eventname'   => '\gradereport_user\event\grade_report_viewed',
+        'callback'    => '\block_sence_connector\observer\course_observer::course_generic_event',
+        'priority'    => 1000,
+    ],
+    [
+        'eventname'   => '\gradereport_overview\event\grade_report_viewed',
+        'callback'    => '\block_sence_connector\observer\course_observer::course_generic_event',
+        'priority'    => 1000,
+    ],
+    [
+        'eventname'   => '\core\event\user_enrolment_created',
+        'callback'    => '\block_sence_connector\observer\course_observer::course_generic_event',
+        'priority'    => 1000,
     ],
 ];
