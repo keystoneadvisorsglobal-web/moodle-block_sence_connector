@@ -23,7 +23,6 @@
  */
 
 require_once(__DIR__ . '/../../config.php');
-require_login();
 
 global $DB, $USER;
 
@@ -37,15 +36,30 @@ $fechahora = optional_param('FechaHora', '', PARAM_TEXT);
 // Match session or create active session
 $session = $DB->get_record('block_sence_sessions', ['idsesionalumno' => $idsesionalumno]);
 
+$courseid = SITEID;
+if ($codigocurso) {
+    $course = $DB->get_record('block_sence_courses', ['codigooferta' => $codigocurso]);
+    if ($course) {
+        $courseid = (int)$course->courseid;
+    }
+}
+
 if (!$session) {
     // New login session
-    $course = $DB->get_record('block_sence_courses', ['codigooferta' => $codigocurso]);
-    $courseid = $course ? $course->courseid : SITEID;
+    $userid = $USER->id ?? 0;
+    if (!$userid && !empty($runalumno)) {
+        $u = $DB->get_record('user', ['idnumber' => $runalumno]);
+        if ($u) {
+            $userid = $u->id;
+            // Restore user session if lost during cross-site post
+            \core\session\manager::set_user($u);
+        }
+    }
 
     $record = (object)[
         'courseid' => $courseid,
-        'userid' => $USER->id,
-        'runalumno' => $runalumno ?: $USER->idnumber,
+        'userid' => $userid,
+        'runalumno' => $runalumno ?: ($USER->idnumber ?? ''),
         'idsesionalumno' => $idsesionalumno,
         'idsesionsence' => $idsesionsence,
         'status' => 'ACTIVE',
