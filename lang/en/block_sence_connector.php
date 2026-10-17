@@ -60,6 +60,12 @@ $string['codigooferta'] = 'Offer Code (SIC)';
 $string['codigooferta_desc'] = 'Course offering identifier registered in SENCE SIC (e.g., CAP-15-01-13-0446).';
 $string['codigogrupo'] = 'Group Code (SIC)';
 $string['lineacapacitacion'] = 'Training Line Code';
+$string['lineacapacitacion_help'] = 'Select SENCE training funding line:
+• 3: Tax Credit (Impulsa Personas)
+• 1: Social Programs / Becas Laborales
+• 2: On-the-job Training
+• 4: FCS Scholarships
+• 5: Direct Agreements';
 $string['horastotales'] = 'Total Chronological Hours';
 $string['asistenciaminima'] = 'Minimum Attendance Requirement (%)';
 $string['notaminima'] = 'Minimum Passing Grade';

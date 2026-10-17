@@ -53,6 +53,7 @@ $capabilities = [
             'manager' => CAP_ALLOW,
         ],
     ],
+    // Capacidad para ver el Libro de Asistencia Pedagógico (Profesor y Administrador)
     'block/sence_connector:viewreports' => [
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'read',
@@ -63,6 +64,16 @@ $capabilities = [
             'manager' => CAP_ALLOW,
         ],
     ],
+    // Capacidad para ver Auditoría Técnica, Envíos SIC, Trazabilidad Forense IP y Sincronizar (Solo Administrador / Manager)
+    'block/sence_connector:viewaudit' => [
+        'riskbitmask' => RISK_CONFIG | RISK_PERSONAL,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+        ],
+    ],
+    // Capacidad para editar ajustes SENCE del curso
     'block/sence_connector:manage' => [
         'riskbitmask' => RISK_CONFIG,
         'captype' => 'write',

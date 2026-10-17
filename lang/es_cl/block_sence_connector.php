@@ -60,6 +60,12 @@ $string['codigooferta'] = 'Código de Oferta (SIC)';
 $string['codigooferta_desc'] = 'Código de oferta asignado en el SIC (ej: CAP-15-01-13-0446).';
 $string['codigogrupo'] = 'Código de Grupo (SIC)';
 $string['lineacapacitacion'] = 'Línea de Capacitación';
+$string['lineacapacitacion_help'] = 'Selecciona la línea de financiamiento SENCE:
+• 3: Franquicia Tributaria (Impulsa Personas)
+• 1: Programas Sociales o Becas Laborales
+• 2: Formación en el Trabajo
+• 4: Becas FCS
+• 5: Convenios Directos y Licitaciones';
 $string['horastotales'] = 'Horas Cronológicas Totales';
 $string['asistenciaminima'] = 'Asistencia Mínima Requerida (%)';
 $string['notaminima'] = 'Calificación Mínima de Aprobación';

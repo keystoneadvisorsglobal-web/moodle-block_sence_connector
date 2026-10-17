@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Main block class for block_sence_connector.
+ * Main block class for block_sence_connector with Multi-Company support.
  *
  * @package    block_sence_connector
  * @copyright  2026 Keystone Advisors
@@ -41,7 +41,7 @@ class block_sence_connector extends block_base {
     }
 
     public function instance_allow_multiple() {
-        return true; // Allows block to be added to multiple regions or blocks on same page
+        return true;
     }
 
     public function has_config() {
@@ -70,12 +70,16 @@ class block_sence_connector extends block_base {
         }
 
         $isteacher = has_capability('block/sence_connector:viewreports', $context);
-        $scourse = $DB->get_record('block_sence_courses', ['courseid' => $courseid]);
+        $logo_url = $OUTPUT->image_url('logo_keystone', 'block_sence_connector')->out(false);
+
+        // Resolve user-specific action config according to group
+        $scourse = sence_helper::get_user_action_config($courseid, $USER->id);
 
         if (!$scourse || !$scourse->enabled) {
             if ($isteacher) {
                 $configure_url = new moodle_url('/blocks/sence_connector/course_settings.php', ['courseid' => $courseid]);
                 $this->content->text = html_writer::tag('div',
+                    html_writer::empty_tag('img', ['src' => $logo_url, 'alt' => 'Keystone Advisors', 'style' => 'max-height: 38px; margin-bottom: 12px;']) .
                     html_writer::tag('p', 'Este curso no tiene habilitada la sincronización SENCE.', ['class' => 'text-muted small']) .
                     html_writer::link($configure_url, 'Configurar SENCE para este curso', ['class' => 'btn btn-sm btn-outline-secondary w-100']),
                     ['class' => 'p-2 text-center']
@@ -124,6 +128,7 @@ class block_sence_connector extends block_base {
             'url_error' => $CFG->wwwroot . '/blocks/sence_connector/error.php',
             'report_url' => (new moodle_url('/blocks/sence_connector/report.php', ['courseid' => $courseid]))->out(false),
             'settings_url' => (new moodle_url('/blocks/sence_connector/course_settings.php', ['courseid' => $courseid]))->out(false),
+            'keystone_logo_url' => $logo_url,
         ];
 
         $this->content->text = $OUTPUT->render_from_template('block_sence_connector/student_view', $template_data);

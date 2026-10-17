@@ -24,7 +24,8 @@ $context = context_course::instance($courseid);
 
 require_login($course);
 
-$scourse = $DB->get_record('block_sence_courses', ['courseid' => $courseid], '*', MUST_EXIST);
+// Resolve specific action config directly from the student's Moodle Group
+$scourse = sence_helper::get_user_action_config($courseid, $USER->id);
 
 // If user already has an active session, let them proceed
 $activesession = $DB->get_record('block_sence_sessions', [
@@ -52,6 +53,7 @@ $codigo_curso = $scourse->codigooferta ?: "CURSO-{$courseid}";
 $id_sesion_alumno = 'SES-' . $USER->id . '-' . time();
 $url_retoma = $CFG->wwwroot . '/blocks/sence_connector/retoma.php';
 $url_error = $CFG->wwwroot . '/blocks/sence_connector/error.php';
+$logo_url = $OUTPUT->image_url('logo_keystone', 'block_sence_connector')->out(false);
 
 echo $OUTPUT->header();
 ?>
@@ -61,8 +63,10 @@ echo $OUTPUT->header();
         <div class="col-md-8 col-lg-7">
             <div class="card shadow-lg border-0 text-center" style="border-radius: 12px; overflow: hidden;">
                 <div class="card-header text-white p-4" style="background-color: #225268;">
-                    <i class="fa fa-id-card fa-3x mb-2"></i>
-                    <h3 class="m-0 font-weight-bold">Registro Obligatorio de Asistencia SENCE</h3>
+                    <div class="mb-2">
+                        <img src="<?php echo $logo_url; ?>" alt="Keystone Advisors" style="max-height: 44px; filter: brightness(0) invert(1);">
+                    </div>
+                    <h4 class="m-0 font-weight-bold">Registro Obligatorio de Asistencia SENCE</h4>
                 </div>
                 <div class="card-body p-4 p-md-5">
                     <div class="alert alert-warning text-start text-left d-flex align-items-center mb-4 p-3" role="alert">
@@ -76,7 +80,8 @@ echo $OUTPUT->header();
                     <div class="p-3 bg-light rounded mb-4 text-start text-left small">
                         <p class="mb-1"><strong>Participante:</strong> <?php echo fullname($USER); ?></p>
                         <p class="mb-1"><strong>RUN / RUT:</strong> <code><?php echo $run ?: 'No registrado en perfil'; ?></code></p>
-                        <p class="mb-0"><strong>Curso:</strong> <?php echo $course->fullname; ?></p>
+                        <p class="mb-1"><strong>Curso:</strong> <?php echo $course->fullname; ?></p>
+                        <p class="mb-1"><strong>Grupo Moodle (ID Acción SENCE):</strong> <code><?php echo htmlspecialchars($scourse->codigooferta); ?></code></p>
                     </div>
 
                     <form action="<?php echo $rce_iniciar_url; ?>" method="POST">
