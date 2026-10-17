@@ -47,6 +47,8 @@ $rutotec = get_config('block_sence_connector', 'rutotec');
 $token = get_config('block_sence_connector', 'token');
 $run = sence_helper::get_user_run($USER);
 $show_student_details = (bool)get_config('block_sence_connector', 'show_student_details');
+$environment = get_config('block_sence_connector', 'environment');
+$enable_sim = (bool)get_config('block_sence_connector', 'enable_simulation_mode') || ($environment === 'test');
 
 $rce_iniciar_url = sence_helper::get_rce_base_url() . 'IniciarSesion';
 $cod_sence = $scourse->codsence ?: '-1';
@@ -54,6 +56,7 @@ $codigo_curso = $scourse->codigooferta ?: "CURSO-{$courseid}";
 $id_sesion_alumno = 'SES-' . $USER->id . '-' . time();
 $url_retoma = $CFG->wwwroot . '/blocks/sence_connector/retoma.php';
 $url_error = $CFG->wwwroot . '/blocks/sence_connector/error.php';
+$sim_url = new moodle_url('/blocks/sence_connector/simulate.php', ['courseid' => $courseid, 'action' => 'start']);
 $logo_url = $OUTPUT->image_url('logo_keystone', 'block_sence_connector')->out(false);
 
 echo $OUTPUT->header();
@@ -105,7 +108,7 @@ echo $OUTPUT->header();
                     </div>
                     <?php endif; ?>
 
-                    <!-- Formulario con botón de acción ClaveÚnica -->
+                    <!-- Formulario Oficial ClaveÚnica SENCE -->
                     <form action="<?php echo $rce_iniciar_url; ?>" method="POST" class="mt-2">
                         <input type="hidden" name="RutOtec" value="<?php echo htmlspecialchars($rutotec); ?>">
                         <input type="hidden" name="Token" value="<?php echo htmlspecialchars($token); ?>">
@@ -120,6 +123,21 @@ echo $OUTPUT->header();
                             <i class="fa fa-key me-2 mr-2"></i> Iniciar Asistencia con ClaveÚnica
                         </button>
                     </form>
+
+                    <?php if ($enable_sim): ?>
+                    <!-- Sandbox / Modo de Simulación para Pruebas QA (Solo ambiente Test) -->
+                    <div class="mt-4 pt-3 border-top">
+                        <div class="alert alert-info py-2 px-3 mb-2 text-start text-left d-flex align-items-center" style="font-size: 0.82rem; background-color: #e7f5fa; border: 1px solid #bce1ee;">
+                            <i class="fa fa-flask me-2 mr-2 text-info fa-lg"></i>
+                            <div>
+                                <strong>Entorno de Pruebas (Test Mode):</strong> Puedes simular el login exitoso sin ClaveÚnica real para probar el curso y el widget como alumno.
+                            </div>
+                        </div>
+                        <a href="<?php echo $sim_url; ?>" class="btn btn-sm btn-outline-info w-100 py-2 font-weight-bold" style="border-radius: 6px;">
+                            <i class="fa fa-play-circle me-1 mr-1"></i> Simular Acceso Exitoso (Modo Pruebas / QA)
+                        </a>
+                    </div>
+                    <?php endif; ?>
 
                     <div class="mt-4 pt-3 border-top small" style="color: #6c757d;">
                         Desarrollado y respaldado de forma gratuita por<br>

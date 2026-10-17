@@ -70,6 +70,14 @@ if ($ADMIN->fulltree) {
         $environments
     ));
 
+    // Habilitar sandbox de simulación para pruebas QA
+    $settings->add(new admin_setting_configcheckbox(
+        'block_sence_connector/enable_simulation_mode',
+        'Habilitar Sandbox de Simulación (Modo QA / Pruebas)',
+        'Permite a los usuarios y administradores simular un inicio o cierre de sesión SENCE exitoso sin pasar por ClaveÚnica real. Ideal para realizar auditorías internas y verificar la experiencia del alumno.',
+        1
+    ));
+
     // Campo de perfil para el RUN del alumno
     $userfields = [
         'idnumber' => 'idnumber (Número de ID estándar)',
