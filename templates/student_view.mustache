@@ -12,14 +12,36 @@
     </div>
 
     {{#is_active}}
-        <div class="alert alert-success d-flex align-items-center mb-3 p-2" role="alert">
-            <i class="fa fa-check-circle fa-lg me-2 mr-2 text-success"></i>
-            <div>
-                <strong>Asistencia SENCE Activa</strong><br>
-                <small class="text-muted">Validada con ClaveÚnica (RUN: {{run_student}})</small>
+        <!-- Badge de Estado SENCE Activo con Pulso -->
+        <div class="alert alert-success d-flex align-items-center mb-2 p-2 shadow-sm border-0" role="alert" style="background-color: #eafaf1; border-left: 4px solid #28a745 !important;">
+            <div class="me-2 mr-2 d-flex align-items-center">
+                <span class="sence-pulse-dot"></span>
+            </div>
+            <div style="line-height: 1.25;">
+                <strong class="text-success" style="font-size: 0.85rem;">Sesión SENCE Activa</strong><br>
+                <small class="text-muted" style="font-size: 0.75rem;">RUN: {{run_student}}</small>
             </div>
         </div>
 
+        <!-- Cronómetro y Datos de la Sesión en Vivo -->
+        <div class="card border-0 mb-3 text-white shadow-sm" style="background: linear-gradient(135deg, #1b4b5e 0%, #0d2833 100%); border-radius: 8px;">
+            <div class="card-body p-2 text-center">
+                <div class="small text-uppercase opacity-75 mb-1" style="font-size: 0.68rem; letter-spacing: 0.5px;">Tiempo Conectado Hoy</div>
+                <div class="h4 font-weight-bold fw-bold mb-1" id="sence-live-timer" style="letter-spacing: 1px; color: #5cf2bd; font-family: monospace;">
+                    00:00:00
+                </div>
+                <div class="small opacity-75" style="font-size: 0.70rem;">
+                    {{#user_group_name}}
+                        <i class="fa fa-users me-1 mr-1"></i> {{user_group_name}}
+                    {{/user_group_name}}
+                    {{^user_group_name}}
+                        <i class="fa fa-tag me-1 mr-1"></i> Acción: {{codigo_curso}}
+                    {{/user_group_name}}
+                </div>
+            </div>
+        </div>
+
+        <!-- Botón de Cierre Seguro SENCE -->
         <form action="{{rce_cerrar_url}}" method="POST" class="mb-3">
             <input type="hidden" name="RutOtec" value="{{rut_otec}}">
             <input type="hidden" name="Token" value="{{token}}">
@@ -29,8 +51,8 @@
             <input type="hidden" name="IdSesionSence" value="{{id_sesion_sence}}">
             <input type="hidden" name="UrlRetoma" value="{{url_retoma}}">
             <input type="hidden" name="UrlError" value="{{url_error}}">
-            <button type="submit" class="btn btn-outline-danger btn-sm w-100 py-2">
-                <i class="fa fa-sign-out fa-fw me-1 mr-1"></i> Cerrar Asistencia SENCE
+            <button type="submit" class="btn btn-outline-danger btn-sm w-100 py-1 font-weight-bold" style="font-size: 0.8rem;">
+                <i class="fa fa-sign-out fa-fw me-1 mr-1"></i> Pausar / Cerrar Asistencia SENCE
             </button>
         </form>
     {{/is_active}}
@@ -57,17 +79,55 @@
         </form>
     {{/is_active}}
 
-    <!-- Barra de progreso de horas SENCE -->
-    <div class="card bg-light border-0 p-2 mb-2">
-        <div class="d-flex justify-content-between align-items-center mb-1">
-            <span class="small font-weight-bold">Horas SENCE:</span>
-            <span class="badge badge-info bg-info text-white">{{hours_connected}}h / {{hours_required}}h</span>
+    <!-- DASHBOARD DE PROGRESO Y DESEMPEÑO DEL ALUMNO -->
+    <div class="student-sence-metrics card bg-light border-0 p-2 mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-2 pb-1 border-bottom">
+            <span class="small font-weight-bold fw-bold text-dark" style="font-size: 0.78rem;">
+                <i class="fa fa-line-chart me-1 mr-1 text-primary"></i> Mi Avance & Desempeño
+            </span>
+            <span class="badge {{#is_attendance_approved}}badge-success bg-success{{/is_attendance_approved}}{{^is_attendance_approved}}badge-warning bg-warning text-dark{{/is_attendance_approved}}" style="font-size: 0.65rem;">
+                {{#is_attendance_approved}}SENCE OK (≥75%){{/is_attendance_approved}}
+                {{^is_attendance_approved}}En Progreso (<75%){{/is_attendance_approved}}
+            </span>
         </div>
-        <div class="progress" style="height: 8px;">
-            <div class="progress-bar bg-info" role="progressbar" style="width: {{attendance_percent}}%;" aria-valuenow="{{attendance_percent}}" aria-valuemin="0" aria-valuemax="100"></div>
+
+        <!-- Métrica 1: Asistencia SENCE -->
+        <div class="mb-2">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                <span class="small text-muted" style="font-size: 0.73rem;">Asistencia SENCE:</span>
+                <span class="badge badge-info bg-info text-white" style="font-size: 0.72rem;">{{hours_connected}}h / {{hours_required}}h ({{attendance_percent}}%)</span>
+            </div>
+            <div class="progress" style="height: 6px;">
+                <div class="progress-bar {{#is_attendance_approved}}bg-success{{/is_attendance_approved}}{{^is_attendance_approved}}bg-info{{/is_attendance_approved}}" role="progressbar" style="width: {{attendance_percent}}%;" aria-valuenow="{{attendance_percent}}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
         </div>
-        <div class="text-right text-end mt-1">
-            <small class="text-muted">{{attendance_percent}}% cumplido</small>
+
+        <!-- Métrica 2: Progreso de Contenidos del Curso -->
+        <div class="mb-2">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                <span class="small text-muted" style="font-size: 0.73rem;">Contenidos Completados:</span>
+                <span class="small font-weight-bold fw-bold text-dark" style="font-size: 0.72rem;">{{course_progress}}%</span>
+            </div>
+            <div class="progress" style="height: 6px;">
+                <div class="progress-bar bg-primary" role="progressbar" style="width: {{course_progress}}%; background-color: #225268 !important;" aria-valuenow="{{course_progress}}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+        </div>
+
+        <!-- Métrica 3: Calificación / Nota Actual -->
+        <div class="d-flex justify-content-between align-items-center pt-1 border-top">
+            <span class="small text-muted" style="font-size: 0.73rem;">
+                <i class="fa fa-graduation-cap me-1 mr-1"></i> Calificación Actual:
+            </span>
+            <div>
+                {{#has_grade}}
+                    <span class="badge {{#is_grade_passing}}badge-success bg-success{{/is_grade_passing}}{{^is_grade_passing}}badge-danger bg-danger{{/is_grade_passing}} font-weight-bold" style="font-size: 0.75rem;">
+                        {{grade_display}}
+                    </span>
+                {{/has_grade}}
+                {{^has_grade}}
+                    <span class="badge badge-secondary bg-secondary text-white" style="font-size: 0.70rem;">Sin notas aún</span>
+                {{/has_grade}}
+            </div>
         </div>
     </div>
 
@@ -75,10 +135,10 @@
     {{#is_teacher}}
         <hr class="my-2">
         <div class="d-grid gap-1">
-            <a href="{{report_url}}" class="btn btn-outline-dark btn-sm w-100 mb-1 font-weight-bold">
+            <a href="{{report_url}}" class="btn btn-outline-dark btn-sm w-100 mb-1 font-weight-bold" style="font-size: 0.78rem;">
                 <i class="fa fa-university fa-fw me-1 mr-1"></i> Centro de Informes y Auditoría SENCE
             </a>
-            <a href="{{settings_url}}" class="btn btn-outline-secondary btn-sm w-100">
+            <a href="{{settings_url}}" class="btn btn-outline-secondary btn-sm w-100" style="font-size: 0.78rem;">
                 <i class="fa fa-cog fa-fw me-1 mr-1"></i> Ajustes Curso SENCE
             </a>
         </div>
@@ -93,3 +153,54 @@
         Av. Apoquindo 6410, Of. 605, Las Condes
     </div>
 </div>
+
+<style>
+.sence-pulse-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background-color: #28a745;
+    border-radius: 50%;
+    box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+    animation: sencePulse 1.8s infinite cubic-bezier(0.66, 0, 0, 1);
+}
+
+@keyframes sencePulse {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+    }
+    70% {
+        transform: scale(1.1);
+        box-shadow: 0 0 0 8px rgba(40, 167, 69, 0);
+    }
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+    }
+}
+</style>
+
+{{#is_active}}
+<script>
+(function() {
+    var startTimestamp = {{session_start_timestamp}} * 1000;
+    var timerEl = document.getElementById('sence-live-timer');
+    if (!timerEl) return;
+
+    function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+    function updateLiveTimer() {
+        var now = new Date().getTime();
+        var elapsedSec = Math.max(0, Math.floor((now - startTimestamp) / 1000));
+        var hours = Math.floor(elapsedSec / 3600);
+        var minutes = Math.floor((elapsedSec % 3600) / 60);
+        var seconds = elapsedSec % 60;
+        timerEl.textContent = pad(hours) + ':' + pad(minutes) + ':' + pad(seconds);
+    }
+
+    updateLiveTimer();
+    setInterval(updateLiveTimer, 1000);
+})();
+</script>
+{{/is_active}}

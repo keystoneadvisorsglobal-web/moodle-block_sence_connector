@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'block_sence_connector';
-$plugin->version   = 2026101705;        // Version: YYYYMMDDXX.
+$plugin->version   = 2026101706;        // Version: YYYYMMDDXX.
 $plugin->requires  = 2022112800;        // Moodle 4.1 LTS or higher (supports 4.1 to 5.x).
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = 'v1.3.0';          // Major upgrade: Multi-Company Group-as-Action-ID & Audit Hub.
+$plugin->release   = 'v1.4.0';          // Major upgrade: Student Live SENCE Dashboard & Academic Progress Widget.

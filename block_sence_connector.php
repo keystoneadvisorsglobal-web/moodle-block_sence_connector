@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Main block class for block_sence_connector with Multi-Company support.
+ * Main block class for block_sence_connector with Multi-Company support and Student Live Dashboard.
  *
  * @package    block_sence_connector
  * @copyright  2026 Keystone Advisors
@@ -99,22 +99,87 @@ class block_sence_connector extends block_base {
             'status' => 'ACTIVE'
         ]);
 
-        // Compute total seconds
-        $total_seconds = (int)$DB->get_field_sql(
+        $session_start_ts = !empty($activesession) ? (int)$activesession->timestart : time();
+
+        // Compute total seconds from closed sessions
+        $closed_seconds = (int)$DB->get_field_sql(
             "SELECT SUM(duration) FROM {block_sence_sessions} WHERE courseid = :courseid AND userid = :userid AND status = 'CLOSED'",
             ['courseid' => $courseid, 'userid' => $USER->id]
         ) ?: 0;
+
+        // Current session elapsed seconds
+        $current_session_seconds = !empty($activesession) ? max(0, time() - $activesession->timestart) : 0;
+        $total_seconds = $closed_seconds + $current_session_seconds;
+
         $total_hours = round($total_seconds / 3600, 1);
         $required_hours = (float)$scourse->horastotales;
         $attendance_pct = ($required_hours > 0) ? min(100, round(($total_hours / $required_hours) * 100)) : 0;
+        $is_attendance_approved = ($attendance_pct >= 75);
+
+        // Academic Progress (Course Completion)
+        $course_record = $this->page->course;
+        if (empty($course_record->id) || $course_record->id != $courseid) {
+            $course_record = $DB->get_record('course', ['id' => $courseid]);
+        }
+        require_once($CFG->libdir . '/completionlib.php');
+        $course_progress = 0;
+        try {
+            $cinfo = new completion_info($course_record);
+            if ($cinfo->is_enabled()) {
+                $raw_progress = \core_completion\progress::get_course_progress_percentage($course_record, $USER->id);
+                $course_progress = ($raw_progress !== null) ? round($raw_progress) : 0;
+            }
+        } catch (\Throwable $e) {
+            $course_progress = 0;
+        }
+
+        // Academic Grades (Course Grade)
+        require_once($CFG->libdir . '/gradelib.php');
+        require_once($CFG->dirroot . '/grade/querylib.php');
+        $grade_display = 'N/A';
+        $has_grade = false;
+        $is_grade_passing = false;
+        try {
+            $gi = grade_item::fetch_course_item($courseid);
+            if ($gi) {
+                $gg = grade_grade::fetch(['itemid' => $gi->id, 'userid' => $USER->id]);
+                if ($gg && !is_null($gg->finalgrade)) {
+                    $grade_display = number_format((float)$gg->finalgrade, 1, ',', '.');
+                    $has_grade = true;
+                    if ($gi->gradepass > 0) {
+                        $is_grade_passing = ((float)$gg->finalgrade >= (float)$gi->gradepass);
+                    } else {
+                        $is_grade_passing = ((float)$gg->finalgrade >= 4.0);
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
+            $grade_display = 'N/A';
+        }
+
+        // Get student's assigned group / action name
+        $user_group_name = '';
+        $usergroups = groups_get_all_groups($courseid, $USER->id);
+        if (!empty($usergroups)) {
+            $first_group = reset($usergroups);
+            $user_group_name = $first_group->name;
+        }
 
         $template_data = [
             'is_teacher' => $isteacher,
             'is_active' => !empty($activesession),
+            'session_start_timestamp' => $session_start_ts,
+            'user_fullname' => fullname($USER),
+            'user_group_name' => $user_group_name,
             'run_student' => $run,
             'hours_connected' => $total_hours,
             'hours_required' => $required_hours,
             'attendance_percent' => $attendance_pct,
+            'is_attendance_approved' => $is_attendance_approved,
+            'course_progress' => $course_progress,
+            'has_grade' => $has_grade,
+            'grade_display' => $grade_display,
+            'is_grade_passing' => $is_grade_passing,
             'rce_iniciar_url' => sence_helper::get_rce_base_url() . 'IniciarSesion',
             'rce_cerrar_url' => sence_helper::get_rce_base_url() . 'CerrarSesion',
             'rut_otec' => $rutotec,
