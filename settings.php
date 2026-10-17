@@ -83,6 +83,14 @@ if ($ADMIN->fulltree) {
         $userfields
     ));
 
+    // Mostrar ficha de datos del alumno en pantalla de login / ClaveÚnica
+    $settings->add(new admin_setting_configcheckbox(
+        'block_sence_connector/show_student_details',
+        'Mostrar Ficha del Participante en Pantalla de Acceso',
+        'Si está desactivado (recomendado), la pantalla de acceso a ClaveÚnica se mostrará limpia, sin la caja de datos personales del alumno (RUN, nombre y curso).',
+        0
+    ));
+
     // Ventana máxima de inactividad pasiva (minutos)
     $settings->add(new admin_setting_configtext(
         'block_sence_connector/inactivity_timeout',

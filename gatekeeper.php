@@ -46,6 +46,7 @@ $PAGE->set_heading($course->fullname);
 $rutotec = get_config('block_sence_connector', 'rutotec');
 $token = get_config('block_sence_connector', 'token');
 $run = sence_helper::get_user_run($USER);
+$show_student_details = (bool)get_config('block_sence_connector', 'show_student_details');
 
 $rce_iniciar_url = sence_helper::get_rce_base_url() . 'IniciarSesion';
 $cod_sence = $scourse->codsence ?: '-1';
@@ -60,14 +61,14 @@ echo $OUTPUT->header();
 
 <div class="container my-5">
     <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-7">
+        <div class="col-md-8 col-lg-6">
             <div class="card shadow-lg border-0 text-center" style="border-radius: 14px; overflow: hidden; background-color: #ffffff;">
                 <!-- Header con logo nítido y título en alto contraste blanco puro -->
                 <div class="card-header p-4" style="background-color: #1a4253; border-bottom: none;">
-                    <div class="mb-3 py-2 px-3 d-inline-block rounded shadow-sm" style="background-color: #ffffff;">
+                    <div class="mb-3 py-2 px-4 d-inline-block rounded shadow-sm" style="background-color: #ffffff;">
                         <img src="<?php echo $logo_url; ?>" alt="Keystone Advisors" style="height: 52px; width: auto; max-width: 260px; object-fit: contain; display: block;">
                     </div>
-                    <h3 class="m-0 font-weight-bold" style="color: #ffffff !important; font-size: 1.45rem; letter-spacing: 0.5px; text-shadow: 0 1px 3px rgba(0,0,0,0.5);">
+                    <h3 class="m-0 font-weight-bold" style="color: #ffffff !important; font-size: 1.40rem; letter-spacing: 0.5px; text-shadow: 0 1px 3px rgba(0,0,0,0.5);">
                         Registro Obligatorio de Asistencia SENCE
                     </h3>
                 </div>
@@ -82,32 +83,30 @@ echo $OUTPUT->header();
                         </div>
                     </div>
 
-                    <!-- Ficha del Alumno (Fondo blanco puro, borde suave y tipografía nítida en alto contraste) -->
-                    <div class="p-4 mb-4 text-start text-left rounded shadow-sm" style="background-color: #ffffff; border: 1.5px solid #e1e7ec; border-radius: 10px;">
-                        <p class="mb-2" style="color: #212529; font-size: 0.98rem;">
+                    <?php if ($show_student_details): ?>
+                    <!-- Ficha del Alumno (Opcional según parámetro en Admin) -->
+                    <div class="p-3 mb-4 text-start text-left rounded shadow-sm" style="background-color: #ffffff; border: 1.5px solid #e1e7ec; border-radius: 10px;">
+                        <p class="mb-2" style="color: #212529; font-size: 0.95rem;">
                             <strong style="color: #0b1f28;">Participante:</strong> 
                             <span class="fw-bold font-weight-bold" style="color: #1a4253;"><?php echo fullname($USER); ?></span>
                         </p>
-                        <p class="mb-2" style="color: #212529; font-size: 0.98rem;">
+                        <p class="mb-2" style="color: #212529; font-size: 0.95rem;">
                             <strong style="color: #0b1f28;">RUN / RUT:</strong> 
-                            <span class="badge px-2 py-1 font-weight-bold" style="background-color: #e9ecef; color: #1a4253; font-size: 0.95rem; border: 1px solid #ced4da;">
+                            <span class="badge px-2 py-1 font-weight-bold" style="background-color: #e9ecef; color: #1a4253; font-size: 0.92rem; border: 1px solid #ced4da;">
                                 <?php echo $run ?: 'No registrado en perfil'; ?>
                             </span>
                         </p>
-                        <p class="mb-2" style="color: #212529; font-size: 0.98rem;">
-                            <strong style="color: #0b1f28;">Curso:</strong> 
-                            <span style="color: #2b2b2b;"><?php echo htmlspecialchars($course->fullname); ?></span>
-                        </p>
-                        <p class="mb-0" style="color: #212529; font-size: 0.98rem;">
+                        <p class="mb-0" style="color: #212529; font-size: 0.95rem;">
                             <strong style="color: #0b1f28;">ID Acción SENCE:</strong> 
-                            <span class="badge px-2 py-1 font-weight-bold" style="background-color: #d1ecf1; color: #0c5460; font-size: 0.95rem; border: 1px solid #bee5eb;">
+                            <span class="badge px-2 py-1 font-weight-bold" style="background-color: #d1ecf1; color: #0c5460; font-size: 0.92rem; border: 1px solid #bee5eb;">
                                 <?php echo htmlspecialchars($scourse->codigooferta); ?>
                             </span>
                         </p>
                     </div>
+                    <?php endif; ?>
 
-                    <!-- Botón de acción con ClaveÚnica -->
-                    <form action="<?php echo $rce_iniciar_url; ?>" method="POST">
+                    <!-- Formulario con botón de acción ClaveÚnica -->
+                    <form action="<?php echo $rce_iniciar_url; ?>" method="POST" class="mt-2">
                         <input type="hidden" name="RutOtec" value="<?php echo htmlspecialchars($rutotec); ?>">
                         <input type="hidden" name="Token" value="<?php echo htmlspecialchars($token); ?>">
                         <input type="hidden" name="CodSence" value="<?php echo htmlspecialchars($cod_sence); ?>">
