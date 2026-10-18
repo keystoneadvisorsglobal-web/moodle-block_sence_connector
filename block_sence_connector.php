@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Main block class for block_sence_connector with Multi-Company support and Student Live Dashboard.
+ * Main block class for block_sence_connector with Multi-Company support and Real Effective Activity Tracking.
  *
  * @package    block_sence_connector
  * @copyright  2026 Keystone Advisors
@@ -100,6 +100,7 @@ class block_sence_connector extends block_base {
         ]);
 
         $session_start_ts = !empty($activesession) ? (int)$activesession->timestart : time();
+        $current_session_effective_seconds = !empty($activesession) ? (int)$activesession->duration : 0;
 
         // Compute total seconds from closed sessions
         $closed_seconds = (int)$DB->get_field_sql(
@@ -107,14 +108,18 @@ class block_sence_connector extends block_base {
             ['courseid' => $courseid, 'userid' => $USER->id]
         ) ?: 0;
 
-        // Current session elapsed seconds
-        $current_session_seconds = !empty($activesession) ? max(0, time() - $activesession->timestart) : 0;
-        $total_seconds = $closed_seconds + $current_session_seconds;
-
-        $total_hours = round($total_seconds / 3600, 1);
+        // Total effective pedagogical seconds
+        $total_effective_seconds = $closed_seconds + $current_session_effective_seconds;
+        $total_hours = round($total_effective_seconds / 3600, 1);
         $required_hours = (float)$scourse->horastotales;
         $attendance_pct = ($required_hours > 0) ? min(100, round(($total_hours / $required_hours) * 100)) : 0;
         $is_attendance_approved = ($attendance_pct >= 75);
+
+        // Format session effective time: HH:MM:SS
+        $sess_h = floor($current_session_effective_seconds / 3600);
+        $sess_m = floor(($current_session_effective_seconds % 3600) / 60);
+        $sess_s = $current_session_effective_seconds % 60;
+        $session_effective_time_str = sprintf('%02d:%02d:%02d', $sess_h, $sess_m, $sess_s);
 
         // Academic Progress (Course Completion)
         $course_record = $this->page->course;
@@ -169,6 +174,11 @@ class block_sence_connector extends block_base {
             'is_teacher' => $isteacher,
             'is_active' => !empty($activesession),
             'session_start_timestamp' => $session_start_ts,
+            'session_effective_seconds' => $current_session_effective_seconds,
+            'session_effective_time_str' => $session_effective_time_str,
+            'courseid' => $courseid,
+            'sesskey' => sesskey(),
+            'ping_url' => (new moodle_url('/blocks/sence_connector/ping.php'))->out(false),
             'user_fullname' => fullname($USER),
             'user_group_name' => $user_group_name,
             'run_student' => $run,

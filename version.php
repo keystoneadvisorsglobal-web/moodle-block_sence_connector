@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'block_sence_connector';
-$plugin->version   = 2026101709;        // Version: YYYYMMDDXX.
+$plugin->version   = 2026101710;        // Version: YYYYMMDDXX.
 $plugin->requires  = 2022112800;        // Moodle 4.1 LTS or higher (supports 4.1 to 5.x).
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = 'v1.7.0';          // Major upgrade: Feature Request & Custom Development Channel (contacto@keystoneadvisors.cl).
+$plugin->release   = 'v1.8.0';          // Major upgrade: Real Effective Pedagogical Activity Tracking & Anti-Idling Heartbeat Engine.

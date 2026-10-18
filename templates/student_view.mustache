@@ -15,20 +15,26 @@
         <!-- Badge de Estado SENCE Activo con Pulso -->
         <div class="alert alert-success d-flex align-items-center mb-2 p-2 shadow-sm border-0" role="alert" style="background-color: #eafaf1; border-left: 4px solid #28a745 !important;">
             <div class="me-2 mr-2 d-flex align-items-center">
-                <span class="sence-pulse-dot"></span>
+                <span class="sence-pulse-dot" id="sence-status-dot"></span>
             </div>
             <div style="line-height: 1.25;">
-                <strong class="text-success" style="font-size: 0.85rem;">Sesión SENCE Activa</strong><br>
+                <div class="d-flex align-items-center justify-content-between">
+                    <strong class="text-success" style="font-size: 0.85rem;" id="sence-status-text">Sesión SENCE Activa</strong>
+                    <span class="badge bg-success badge-success text-white ms-2" id="sence-activity-badge" style="font-size: 0.65rem;">En Actividad</span>
+                </div>
                 <small class="text-muted" style="font-size: 0.75rem;">RUN: {{run_student}}</small>
             </div>
         </div>
 
-        <!-- Cronómetro y Datos de la Sesión en Vivo -->
+        <!-- Cronómetro y Datos de la Sesión en Vivo con Detección de Actividad Real -->
         <div class="card border-0 mb-3 text-white shadow-sm" style="background: linear-gradient(135deg, #1b4b5e 0%, #0d2833 100%); border-radius: 8px;">
             <div class="card-body p-2 text-center">
-                <div class="small text-uppercase opacity-75 mb-1" style="font-size: 0.68rem; letter-spacing: 0.5px;">Tiempo Conectado Hoy</div>
-                <div class="h4 font-weight-bold fw-bold mb-1" id="sence-live-timer" style="letter-spacing: 1px; color: #5cf2bd; font-family: monospace;">
-                    00:00:00
+                <div class="small text-uppercase opacity-75 mb-1 d-flex justify-content-between px-2" style="font-size: 0.68rem; letter-spacing: 0.5px;">
+                    <span>Tiempo Efectivo Hoy</span>
+                    <span id="sence-idle-timer" class="text-warning opacity-75"></span>
+                </div>
+                <div class="h3 font-weight-bold fw-bold mb-1" id="sence-live-timer" style="letter-spacing: 1px; color: #5cf2bd; font-family: monospace;">
+                    {{session_effective_time_str}}
                 </div>
                 <div class="small opacity-75" style="font-size: 0.70rem;">
                     {{#user_group_name}}
@@ -39,6 +45,11 @@
                     {{/user_group_name}}
                 </div>
             </div>
+        </div>
+
+        <!-- Alerta de Inactividad (Oculta por defecto) -->
+        <div id="sence-idle-alert" class="alert alert-warning py-1 px-2 mb-2 small text-center d-none" style="font-size: 0.75rem; border-radius: 6px;">
+            <i class="fa fa-pause-circle me-1 mr-1"></i> Cronómetro en pausa por inactividad. Mueve el cursor para reanudar.
         </div>
 
         <!-- Botón de Cierre Seguro SENCE -->
@@ -91,14 +102,14 @@
             </span>
         </div>
 
-        <!-- Métrica 1: Asistencia SENCE -->
+        <!-- Métrica 1: Asistencia SENCE Efectiva -->
         <div class="mb-2">
             <div class="d-flex justify-content-between align-items-center mb-1">
-                <span class="small text-muted" style="font-size: 0.73rem;">Asistencia SENCE:</span>
-                <span class="badge badge-info bg-info text-white" style="font-size: 0.72rem;">{{hours_connected}}h / {{hours_required}}h ({{attendance_percent}}%)</span>
+                <span class="small text-muted" style="font-size: 0.73rem;">Asistencia SENCE (Efectiva):</span>
+                <span class="badge badge-info bg-info text-white" id="sence-progress-badge" style="font-size: 0.72rem;">{{hours_connected}}h / {{hours_required}}h ({{attendance_percent}}%)</span>
             </div>
             <div class="progress" style="height: 6px;">
-                <div class="progress-bar {{#is_attendance_approved}}bg-success{{/is_attendance_approved}}{{^is_attendance_approved}}bg-info{{/is_attendance_approved}}" role="progressbar" style="width: {{attendance_percent}}%;" aria-valuenow="{{attendance_percent}}" aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress-bar {{#is_attendance_approved}}bg-success{{/is_attendance_approved}}{{^is_attendance_approved}}bg-info{{/is_attendance_approved}}" id="sence-progress-bar" role="progressbar" style="width: {{attendance_percent}}%;" aria-valuenow="{{attendance_percent}}" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
         </div>
 
@@ -189,6 +200,12 @@
     animation: sencePulse 1.8s infinite cubic-bezier(0.66, 0, 0, 1);
 }
 
+.sence-pulse-dot.paused {
+    background-color: #ffc107 !important;
+    animation: none !important;
+    box-shadow: none !important;
+}
+
 @keyframes sencePulse {
     0% {
         transform: scale(0.95);
@@ -208,23 +225,97 @@
 {{#is_active}}
 <script>
 (function() {
-    var startTimestamp = {{session_start_timestamp}} * 1000;
+    var effectiveSeconds = {{session_effective_seconds}};
+    var courseId = {{courseid}};
+    var sesskey = '{{sesskey}}';
+    var pingUrl = '{{ping_url}}';
+    
+    var lastInteraction = Date.now();
+    var isUserActive = true;
+    var idleThresholdMs = 180000; // 3 minutos de inactividad para pausar cronometro
+    
     var timerEl = document.getElementById('sence-live-timer');
-    if (!timerEl) return;
-
+    var dotEl = document.getElementById('sence-status-dot');
+    var badgeEl = document.getElementById('sence-activity-badge');
+    var alertEl = document.getElementById('sence-idle-alert');
+    
     function pad(n) { return (n < 10 ? '0' : '') + n; }
 
-    function updateLiveTimer() {
-        var now = new Date().getTime();
-        var elapsedSec = Math.max(0, Math.floor((now - startTimestamp) / 1000));
-        var hours = Math.floor(elapsedSec / 3600);
-        var minutes = Math.floor((elapsedSec % 3600) / 60);
-        var seconds = elapsedSec % 60;
-        timerEl.textContent = pad(hours) + ':' + pad(minutes) + ':' + pad(seconds);
+    function renderTime() {
+        var h = Math.floor(effectiveSeconds / 3600);
+        var m = Math.floor((effectiveSeconds % 3600) / 60);
+        var s = effectiveSeconds % 60;
+        if (timerEl) {
+            timerEl.textContent = pad(h) + ':' + pad(m) + ':' + pad(s);
+        }
     }
 
-    updateLiveTimer();
-    setInterval(updateLiveTimer, 1000);
+    // Registrar interacciones del usuario
+    function markActive() {
+        lastInteraction = Date.now();
+        if (!isUserActive) {
+            isUserActive = true;
+            if (dotEl) dotEl.classList.remove('paused');
+            if (badgeEl) {
+                badgeEl.className = 'badge bg-success badge-success text-white ms-2';
+                badgeEl.textContent = 'En Actividad';
+            }
+            if (alertEl) alertEl.classList.add('d-none');
+        }
+    }
+
+    ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart', 'click'].forEach(function(evt) {
+        window.addEventListener(evt, markActive, { passive: true });
+    });
+
+    // Revisar estado y avanzar segundo a segundo solo si hay actividad real
+    setInterval(function() {
+        var elapsedSinceAction = Date.now() - lastInteraction;
+        if (elapsedSinceAction > idleThresholdMs) {
+            if (isUserActive) {
+                isUserActive = false;
+                if (dotEl) dotEl.classList.add('paused');
+                if (badgeEl) {
+                    badgeEl.className = 'badge bg-warning badge-warning text-dark ms-2';
+                    badgeEl.textContent = 'En Pausa';
+                }
+                if (alertEl) alertEl.classList.remove('d-none');
+            }
+        } else {
+            // Usuario activo: sumamos un segundo efectivo
+            effectiveSeconds++;
+            renderTime();
+        }
+    }, 1000);
+
+    // Heartbeat / Ping al servidor cada 30 segundos
+    setInterval(function() {
+        if (!navigator.onLine) return;
+        var postData = new URLSearchParams();
+        postData.append('courseid', courseId);
+        postData.append('sesskey', sesskey);
+        postData.append('active', isUserActive ? 1 : 0);
+
+        fetch(pingUrl, {
+            method: 'POST',
+            body: postData,
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            if (data.status === 'success' && data.session_effective_seconds !== undefined) {
+                // Sincronizar con el cálculo del servidor
+                effectiveSeconds = data.session_effective_seconds;
+            } else if (data.status === 'timeout_closed') {
+                window.location.reload();
+            }
+        })
+        .catch(function(e) {
+            // Ignorar errores transitorios de red
+        });
+    }, 30000);
+
+    renderTime();
 })();
 </script>
 {{/is_active}}
