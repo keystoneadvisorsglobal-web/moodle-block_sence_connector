@@ -50,10 +50,8 @@ function block_sence_connector_before_http_headers() {
                     var senceLogoUrl = "{$logo_url}";
 
                     function injectSenceBadges() {
-                        var cards = document.querySelectorAll('.dashboard-card, [data-region="course-content"], .course-info-container');
-                        if (!cards.length) {
-                            cards = document.querySelectorAll('.card.dashboard-card, .coursebox');
-                        }
+                        // Seleccionar únicamente el contenedor raíz de la tarjeta (evita seleccionar sub-elementos internos)
+                        var cards = document.querySelectorAll('.dashboard-card, .card.dashboard-card, .coursebox');
 
                         cards.forEach(function(card) {
                             if (card.getAttribute('data-sence-checked')) return;
@@ -68,10 +66,15 @@ function block_sence_connector_before_http_headers() {
 
                             var cid = parseInt(match[1], 10);
                             if (senceCourseIds.indexOf(cid) !== -1) {
-                                // Encontrado curso SENCE: inyectar distintivo en la imagen o cabecera de la tarjeta
+                                // Encontrado curso SENCE: ubicar exclusivamente la imagen o área visual de la tarjeta
                                 var imgContainer = card.querySelector('.card-img-top, .courseimage, .dashboard-card-img');
-                                var target = imgContainer || card;
+                                if (!imgContainer) {
+                                    // Buscar cualquier contenedor de imagen o wrapper de imagen previo al cuerpo de texto
+                                    imgContainer = card.querySelector('[style*="background-image"], .course-image');
+                                }
+                                var target = imgContainer;
 
+                                // Si existe target y aún no tiene el badge, insertarlo ÚNICAMENTE dentro de la imagen
                                 if (target && !card.querySelector('.sence-card-badge')) {
                                     if (window.getComputedStyle(target).position === 'static') {
                                         target.style.position = 'relative';

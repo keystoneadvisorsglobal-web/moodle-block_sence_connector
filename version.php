@@ -11,8 +11,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'block_sence_connector';
-$plugin->version   = 2026101805;        // Version: YYYYMMDDXX.
+$plugin->version   = 2026101806;        // Version: YYYYMMDDXX.
 $plugin->requires  = 2022112800;        // Moodle 4.1 LTS or higher (supports 4.1 to 5.x).
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = 'v1.13.0';         // Official SENCE Logo Badge on Course Cards in "Mis Cursos".
+$plugin->release   = 'v1.13.1';         // Fix: Restrict SENCE badge exclusively to course image container.
 
