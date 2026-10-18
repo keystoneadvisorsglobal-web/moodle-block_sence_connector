@@ -1,26 +1,12 @@
 <?php
 // This file is part of Moodle - http://moodle.org/
 //
-// Moodle is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// @package    block_sence_connector
+// @copyright  2026 Keystone Advisors SpA (https://www.keystoneadvisors.cl)
+// @license    Proprietary / Keystone Advisors Freeware License (All Rights Reserved)
 //
-// Moodle is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
-/**
- * Enhanced SENCE Reporting Hub with Group-as-Action-ID Filtering & Course Identification.
- *
- * @package    block_sence_connector
- * @copyright  2026 Keystone Advisors
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+// Queda prohibida la reproducción, modificación, copia o comercialización total
+// o parcial de este software sin el consentimiento expreso y por escrito de Keystone Advisors.
 
 require_once(__DIR__ . '/../../config.php');
 
@@ -296,25 +282,25 @@ $export_csv_url = new moodle_url('/blocks/sence_connector/report.php', [
                 <span>
                     <i class="fa fa-list me-1 mr-1"></i> Libro de Asistencia SENCE - <?php echo htmlspecialchars($selected_group_name); ?>
                 </span>
-                <span class="badge bg-primary text-white" style="font-size: 0.80rem;">
+                <span class="badge bg-primary text-white" style="font-size: 0.78rem;">
                     Curso: <?php echo htmlspecialchars($course->fullname); ?>
                 </span>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle m-0">
-                        <thead class="thead-light bg-light">
+                    <table class="table table-hover align-middle m-0" style="font-size: 0.82rem;">
+                        <thead class="thead-light bg-light" style="font-size: 0.78rem;">
                             <tr>
-                                <th>Participante</th>
-                                <th>Curso Moodle</th>
-                                <th>RUN Oficial</th>
-                                <th>Grupo Moodle (ID Acción)</th>
-                                <th>Estado Actual</th>
-                                <th>Horas Efectivas</th>
-                                <th>% Cumplimiento</th>
-                                <th>Estado SENCE</th>
+                                <th style="white-space: nowrap;">Participante</th>
+                                <th style="white-space: nowrap;">Curso</th>
+                                <th style="white-space: nowrap;">RUN</th>
+                                <th style="white-space: nowrap;">Grupo (Acción)</th>
+                                <th style="white-space: nowrap;">Estado</th>
+                                <th style="white-space: nowrap;">Horas Efectivas</th>
+                                <th style="min-width: 140px;">% Cumplimiento</th>
+                                <th style="white-space: nowrap;">SENCE</th>
                                 <?php if ($is_admin): ?>
-                                    <th class="text-center">Auditoría</th>
+                                    <th class="text-center" style="white-space: nowrap;">Auditoría</th>
                                 <?php endif; ?>
                             </tr>
                         </thead>
@@ -344,52 +330,52 @@ $export_csv_url = new moodle_url('/blocks/sence_connector/report.php', [
                                     ]);
                                 ?>
                                 <tr>
-                                    <td>
-                                        <strong><?php echo fullname($user); ?></strong><br>
-                                        <small class="text-muted"><?php echo $user->email; ?></small>
+                                    <td style="line-height: 1.2;">
+                                        <strong style="color: #1a4253;"><?php echo fullname($user); ?></strong><br>
+                                        <small class="text-muted" style="font-size: 0.72rem;"><?php echo $user->email; ?></small>
                                     </td>
                                     <td>
-                                        <span class="badge bg-light text-dark border">
+                                        <span class="badge bg-light text-dark border" style="font-size: 0.72rem;">
                                             <?php echo htmlspecialchars($course->shortname); ?>
                                         </span>
                                     </td>
-                                    <td><code><?php echo $run ?: 'Sin RUN'; ?></code></td>
+                                    <td><code style="font-size: 0.76rem;"><?php echo $run ?: 'Sin RUN'; ?></code></td>
                                     <td>
                                         <strong class="text-primary">
-                                            <code><?php echo htmlspecialchars($ua->codigooferta); ?></code>
+                                            <code style="font-size: 0.76rem;"><?php echo htmlspecialchars($ua->codigooferta); ?></code>
                                         </strong>
                                     </td>
                                     <td>
                                         <?php if ($activesession): ?>
-                                            <span class="badge bg-success badge-success">Activo (ClaveÚnica)</span>
+                                            <span class="badge bg-success badge-success" style="font-size: 0.70rem;">Activo (RCE)</span>
                                         <?php else: ?>
-                                            <span class="badge bg-secondary badge-secondary">Desconectado</span>
+                                            <span class="badge bg-secondary badge-secondary" style="font-size: 0.70rem;">Desconectado</span>
                                         <?php endif; ?>
                                     </td>
-                                    <td><strong><?php echo $hours; ?> hrs</strong></td>
+                                    <td><strong style="font-size: 0.82rem;"><?php echo $hours; ?> hrs</strong></td>
                                     <td>
-                                        <div class="progress" style="height: 14px;">
+                                        <div class="progress" style="height: 12px; margin-bottom: 2px;">
                                             <div class="progress-bar <?php echo $is_approved ? 'bg-success' : 'bg-info'; ?>" 
                                                  role="progressbar" 
-                                                 style="width: <?php echo $pct; ?>%;" 
+                                                 style="width: <?php echo $pct; ?>%; font-size: 0.65rem; line-height: 12px;" 
                                                  aria-valuenow="<?php echo $pct; ?>" 
                                                  aria-valuemin="0" 
                                                  aria-valuemax="100">
                                                 <?php echo $pct; ?>%
                                             </div>
                                         </div>
-                                        <small class="text-muted"><?php echo $hours; ?> de <?php echo $req_hours; ?> hrs requeridas</small>
+                                        <small class="text-muted" style="font-size: 0.68rem;"><?php echo $hours; ?>/<?php echo $req_hours; ?>h req.</small>
                                     </td>
                                     <td>
                                         <?php if ($is_approved): ?>
-                                            <span class="badge bg-success badge-success"><i class="fa fa-check"></i> Cumple SENCE</span>
+                                            <span class="badge bg-success badge-success" style="font-size: 0.70rem;"><i class="fa fa-check"></i> Cumple SENCE</span>
                                         <?php else: ?>
-                                            <span class="badge bg-warning badge-warning text-dark"><i class="fa fa-clock-o"></i> En Curso (&lt;<?php echo $min_pct; ?>%)</span>
+                                            <span class="badge bg-warning badge-warning text-dark" style="font-size: 0.70rem;"><i class="fa fa-clock-o"></i> En Curso (&lt;<?php echo $min_pct; ?>%)</span>
                                         <?php endif; ?>
                                     </td>
                                     <?php if ($is_admin): ?>
                                         <td class="text-center">
-                                            <a href="<?php echo $user_sessions_url->out(false); ?>" class="btn btn-sm btn-outline-info" title="Ver sesiones individuales">
+                                            <a href="<?php echo $user_sessions_url->out(false); ?>" class="btn btn-xs btn-sm btn-outline-info py-0 px-2" style="font-size: 0.72rem;" title="Ver sesiones individuales">
                                                 <i class="fa fa-history"></i> Sesiones
                                             </a>
                                         </td>
@@ -415,8 +401,8 @@ $export_csv_url = new moodle_url('/blocks/sence_connector/report.php', [
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover table-striped align-middle m-0" style="font-size: 0.85rem;">
-                        <thead class="table-dark">
+                    <table class="table table-hover table-striped align-middle m-0" style="font-size: 0.80rem;">
+                        <thead class="table-dark" style="font-size: 0.76rem;">
                             <tr>
                                 <th>Fecha y Hora</th>
                                 <th>Estado HTTP</th>
@@ -443,13 +429,13 @@ $export_csv_url = new moodle_url('/blocks/sence_connector/report.php', [
                                         <td>
                                             <details>
                                                 <summary class="text-primary" style="cursor: pointer;">Ver JSON enviado</summary>
-                                                <pre class="bg-light p-2 mt-2 rounded border" style="max-height: 150px; overflow-y: auto; font-size: 0.75rem;"><?php echo htmlspecialchars($log->payload); ?></pre>
+                                                <pre class="bg-light p-2 mt-2 rounded border" style="max-height: 150px; overflow-y: auto; font-size: 0.72rem;"><?php echo htmlspecialchars($log->payload); ?></pre>
                                             </details>
                                         </td>
                                         <td>
                                             <details>
                                                 <summary class="text-info" style="cursor: pointer;">Ver Respuesta SENCE</summary>
-                                                <pre class="bg-light p-2 mt-2 rounded border" style="max-height: 150px; overflow-y: auto; font-size: 0.75rem;"><?php echo htmlspecialchars($log->response); ?></pre>
+                                                <pre class="bg-light p-2 mt-2 rounded border" style="max-height: 150px; overflow-y: auto; font-size: 0.72rem;"><?php echo htmlspecialchars($log->response); ?></pre>
                                             </details>
                                         </td>
                                     </tr>
@@ -492,10 +478,10 @@ $export_csv_url = new moodle_url('/blocks/sence_connector/report.php', [
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover table-striped align-middle m-0" style="font-size: 0.85rem;">
-                        <thead class="table-dark">
+                    <table class="table table-hover table-striped align-middle m-0" style="font-size: 0.80rem;">
+                        <thead class="table-dark" style="font-size: 0.76rem;">
                             <tr>
-                                <th>Curso Moodle</th>
+                                <th>Curso</th>
                                 <th>Participante</th>
                                 <th>RUN</th>
                                 <th>ID Sesión Alumno</th>
@@ -517,25 +503,25 @@ $export_csv_url = new moodle_url('/blocks/sence_connector/report.php', [
                                 ?>
                                     <tr>
                                         <td>
-                                            <span class="badge bg-light text-dark border">
+                                            <span class="badge bg-light text-dark border" style="font-size: 0.70rem;">
                                                 <?php echo htmlspecialchars($course->shortname); ?>
                                             </span>
                                         </td>
                                         <td><strong><?php echo $u ? fullname($u) : "ID {$s->userid}"; ?></strong></td>
-                                        <td><code><?php echo htmlspecialchars($s->runalumno); ?></code></td>
-                                        <td><code style="font-size: 0.75rem;"><?php echo htmlspecialchars($s->idsesionalumno); ?></code></td>
-                                        <td><code style="font-size: 0.75rem;"><?php echo htmlspecialchars($s->idsesionsence ?: 'Pendiente'); ?></code></td>
+                                        <td><code style="font-size: 0.74rem;"><?php echo htmlspecialchars($s->runalumno); ?></code></td>
+                                        <td><code style="font-size: 0.72rem;"><?php echo htmlspecialchars($s->idsesionalumno); ?></code></td>
+                                        <td><code style="font-size: 0.72rem;"><?php echo htmlspecialchars($s->idsesionsence ?: 'Pendiente'); ?></code></td>
                                         <td><?php echo $s->timestart ? userdate($s->timestart, '%d/%m/%Y %H:%M:%S') : '-'; ?></td>
-                                        <td><?php echo $s->timeend ? userdate($s->timeend, '%d/%m/%Y %H:%M:%S') : '<span class="badge bg-success">En Curso</span>'; ?></td>
+                                        <td><?php echo $s->timeend ? userdate($s->timeend, '%d/%m/%Y %H:%M:%S') : '<span class="badge bg-success" style="font-size: 0.68rem;">En Curso</span>'; ?></td>
                                         <td><strong><?php echo $dur_mins; ?> min</strong></td>
                                         <td><code><?php echo htmlspecialchars($s->ipaddress ?: '-'); ?></code></td>
                                         <td>
                                             <?php if ($s->status === 'ACTIVE'): ?>
-                                                <span class="badge bg-success">ACTIVA</span>
+                                                <span class="badge bg-success" style="font-size: 0.70rem;">ACTIVA</span>
                                             <?php elseif ($s->status === 'CLOSED'): ?>
-                                                <span class="badge bg-secondary">CERRADA</span>
+                                                <span class="badge bg-secondary" style="font-size: 0.70rem;">CERRADA</span>
                                             <?php else: ?>
-                                                <span class="badge bg-danger"><?php echo htmlspecialchars($s->status); ?></span>
+                                                <span class="badge bg-danger" style="font-size: 0.70rem;"><?php echo htmlspecialchars($s->status); ?></span>
                                             <?php endif; ?>
                                         </td>
                                     </tr>
