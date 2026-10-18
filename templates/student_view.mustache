@@ -52,26 +52,16 @@
             <i class="fa fa-pause-circle me-1 mr-1"></i> Cronómetro en pausa por inactividad. Mueve el cursor para reanudar.
         </div>
 
-        <!-- Botón de Cierre Seguro SENCE -->
-        <form action="{{rce_cerrar_url}}" method="POST" class="mb-3">
-            <input type="hidden" name="RutOtec" value="{{rut_otec}}">
-            <input type="hidden" name="Token" value="{{token}}">
-            <input type="hidden" name="CodSence" value="{{cod_sence}}">
-            <input type="hidden" name="CodigoCurso" value="{{codigo_curso}}">
-            <input type="hidden" name="IdSesionAlumno" value="{{id_sesion_alumno}}">
-            <input type="hidden" name="IdSesionSence" value="{{id_sesion_sence}}">
-            <input type="hidden" name="UrlRetoma" value="{{url_retoma}}">
-            <input type="hidden" name="UrlError" value="{{url_error}}">
-            <button type="submit" class="btn btn-outline-danger btn-sm w-100 py-1 font-weight-bold" style="font-size: 0.8rem;">
-                <i class="fa fa-sign-out fa-fw me-1 mr-1"></i> Pausar / Cerrar Asistencia SENCE
-            </button>
-        </form>
+        <!-- Botón de Pausa / Cierre Local Seguro de Asistencia (Se mantiene en Moodle) -->
+        <a href="{{close_session_url}}" class="btn btn-outline-danger btn-sm w-100 py-2 mb-3 font-weight-bold shadow-sm" style="font-size: 0.82rem; border-radius: 6px;">
+            <i class="fa fa-pause fa-fw me-1 mr-1"></i> Pausar / Cerrar Asistencia SENCE
+        </a>
     {{/is_active}}
 
     {{^is_active}}
-        <div class="alert alert-warning mb-3 p-2 small" role="alert">
+        <div class="alert alert-warning mb-3 p-2 small shadow-sm" style="background-color: #fff9e6; border-left: 4px solid #e5a50a;" role="alert">
             <i class="fa fa-exclamation-triangle me-1 mr-1 text-warning"></i>
-            Debes validar tu asistencia en SENCE para registrar tus horas del curso.
+            Debes validar tu asistencia en SENCE para registrar tus horas y acceder a los contenidos del curso.
         </div>
 
         <form action="{{rce_iniciar_url}}" method="POST" class="mb-3">

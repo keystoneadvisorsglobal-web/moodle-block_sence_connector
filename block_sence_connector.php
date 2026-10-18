@@ -170,6 +170,11 @@ class block_sence_connector extends block_base {
             $user_group_name = $first_group->name;
         }
 
+        $close_session_url = new moodle_url('/blocks/sence_connector/close_session.php', [
+            'courseid' => $courseid,
+            'sesskey' => sesskey()
+        ]);
+
         $template_data = [
             'is_teacher' => $isteacher,
             'is_active' => !empty($activesession),
@@ -178,6 +183,7 @@ class block_sence_connector extends block_base {
             'session_effective_time_str' => $session_effective_time_str,
             'courseid' => $courseid,
             'sesskey' => sesskey(),
+            'close_session_url' => $close_session_url->out(false),
             'ping_url' => (new moodle_url('/blocks/sence_connector/ping.php'))->out(false),
             'user_fullname' => fullname($USER),
             'user_group_name' => $user_group_name,

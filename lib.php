@@ -28,8 +28,8 @@ use block_sence_connector\observer\course_observer;
 
 /**
  * Global hook executed before HTTP headers on EVERY Moodle page.
- * Intercepts any page within a SENCE-enabled course (grades, activities, participants, etc.)
- * and enforces mandatory SENCE ClaveÚnica authentication before rendering any content or menus.
+ * Intercepts internal activities (grades, quizzes, assignments, resources)
+ * and enforces mandatory SENCE ClaveÚnica authentication before rendering content.
  */
 function block_sence_connector_before_http_headers() {
     global $PAGE, $COURSE;
@@ -42,7 +42,9 @@ function block_sence_connector_before_http_headers() {
     }
 
     if ($courseid > 1) {
-        course_observer::check_sence_access($courseid);
+        $uri = $_SERVER['REQUEST_URI'] ?? '';
+        $is_activity = (strpos($uri, '/mod/') !== false || strpos($uri, '/grade/') !== false);
+        course_observer::check_sence_access($courseid, $is_activity);
     }
 }
 
@@ -62,6 +64,8 @@ function block_sence_connector_extend_navigation(global_navigation $navigation) 
     }
 
     if ($courseid > 1) {
-        course_observer::check_sence_access($courseid);
+        $uri = $_SERVER['REQUEST_URI'] ?? '';
+        $is_activity = (strpos($uri, '/mod/') !== false || strpos($uri, '/grade/') !== false);
+        course_observer::check_sence_access($courseid, $is_activity);
     }
 }
