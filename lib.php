@@ -50,60 +50,62 @@ function block_sence_connector_before_http_headers() {
                     var senceLogoUrl = "{$logo_url}";
 
                     function injectSenceBadges() {
-                        // Seleccionar únicamente el contenedor raíz de la tarjeta (evita seleccionar sub-elementos internos)
-                        var cards = document.querySelectorAll('.dashboard-card, .card.dashboard-card, .coursebox');
+                        var cards = document.querySelectorAll(".course-card, .dashboard-card, [data-region=\"course-content\"], .coursebox");
 
                         cards.forEach(function(card) {
-                            if (card.getAttribute('data-sence-checked')) return;
-                            card.setAttribute('data-sence-checked', '1');
-
-                            // Buscar el ID del curso en el enlace
-                            var link = card.querySelector('a[href*="/course/view.php?id="]');
-                            if (!link) return;
-
-                            var match = link.href.match(/id=(\d+)/);
-                            if (!match) return;
-
-                            var cid = parseInt(match[1], 10);
-                            if (senceCourseIds.indexOf(cid) !== -1) {
-                                // Encontrado curso SENCE: ubicar exclusivamente la imagen o área visual de la tarjeta
-                                var imgContainer = card.querySelector('.card-img-top, .courseimage, .dashboard-card-img');
-                                if (!imgContainer) {
-                                    // Buscar cualquier contenedor de imagen o wrapper de imagen previo al cuerpo de texto
-                                    imgContainer = card.querySelector('[style*="background-image"], .course-image');
-                                }
-                                var target = imgContainer;
-
-                                // Si existe target y aún no tiene el badge, insertarlo ÚNICAMENTE dentro de la imagen
-                                if (target && !card.querySelector('.sence-card-badge')) {
-                                    if (window.getComputedStyle(target).position === 'static') {
-                                        target.style.position = 'relative';
-                                    }
-
-                                    var badge = document.createElement('div');
-                                    badge.className = 'sence-card-badge';
-                                    badge.title = 'Curso Oficial con Sincronización SENCE (ClaveÚnica)';
-                                    badge.style.cssText = 'position: absolute; top: 8px; right: 8px; z-index: 5; background: rgba(255, 255, 255, 0.95); padding: 3px 8px; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.25); display: flex; align-items: center; gap: 5px; border: 1.5px solid #005a9c;';
-
-                                    var img = document.createElement('img');
-                                    img.src = senceLogoUrl;
-                                    img.alt = 'SENCE';
-                                    img.style.cssText = 'height: 18px; width: auto; object-fit: contain; display: block;';
-
-                                    var text = document.createElement('span');
-                                    text.textContent = 'SENCE';
-                                    text.style.cssText = 'font-weight: 800; font-size: 0.70rem; color: #005a9c; letter-spacing: 0.5px;';
-
-                                    badge.appendChild(img);
-                                    badge.appendChild(text);
-                                    target.appendChild(badge);
+                            var cid = 0;
+                            var attrId = card.getAttribute("data-course-id");
+                            if (attrId) {
+                                cid = parseInt(attrId, 10);
+                            } else {
+                                var link = card.querySelector("a[href*=\"/course/view.php?id=\"]");
+                                if (link) {
+                                    var match = link.href.match(/id=(\\d+)/);
+                                    if (match) cid = parseInt(match[1], 10);
                                 }
                             }
+
+                            if (!cid || senceCourseIds.indexOf(cid) === -1) {
+                                return;
+                            }
+
+                            var imgTop = card.querySelector(".card-img-top, .courseimage, .dashboard-card-img");
+                            var imgWrapper = imgTop ? (imgTop.closest("a") || imgTop) : null;
+
+                            if (!imgWrapper) {
+                                return;
+                            }
+
+                            if (card.querySelector(".sence-card-badge") || imgWrapper.querySelector(".sence-card-badge")) {
+                                return;
+                            }
+
+                            if (window.getComputedStyle(imgWrapper).position === "static") {
+                                imgWrapper.style.position = "relative";
+                            }
+
+                            var badge = document.createElement("div");
+                            badge.className = "sence-card-badge";
+                            badge.title = "Curso Oficial SENCE (ClaveÚnica)";
+                            badge.style.cssText = "position: absolute; top: 10px; right: 10px; z-index: 10; background: rgba(255, 255, 255, 0.95); padding: 3px 8px; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 5px; border: 1.5px solid #005a9c; pointer-events: none;";
+
+                            var img = document.createElement("img");
+                            img.src = senceLogoUrl;
+                            img.alt = "SENCE";
+                            img.style.cssText = "height: 18px; width: auto; object-fit: contain; display: block;";
+
+                            var text = document.createElement("span");
+                            text.textContent = "SENCE";
+                            text.style.cssText = "font-weight: 800; font-size: 0.70rem; color: #005a9c; letter-spacing: 0.5px;";
+
+                            badge.appendChild(img);
+                            badge.appendChild(text);
+                            imgWrapper.appendChild(badge);
                         });
                     }
 
-                    document.addEventListener('DOMContentLoaded', injectSenceBadges);
-                    setInterval(injectSenceBadges, 1500); // Para tarjetas cargadas vía AJAX
+                    document.addEventListener("DOMContentLoaded", injectSenceBadges);
+                    setInterval(injectSenceBadges, 1000);
                 })();
 JS;
                 $PAGE->requires->js_init_code($js, true);
