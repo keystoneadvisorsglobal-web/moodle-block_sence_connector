@@ -193,6 +193,7 @@ class block_sence_connector extends block_base {
             'url_error' => $CFG->wwwroot . '/blocks/sence_connector/error.php',
             'report_url' => (new moodle_url('/blocks/sence_connector/report.php', ['courseid' => $courseid]))->out(false),
             'settings_url' => (new moodle_url('/blocks/sence_connector/course_settings.php', ['courseid' => $courseid]))->out(false),
+            'upload_students_url' => (new moodle_url('/blocks/sence_connector/upload_students.php', ['courseid' => $courseid]))->out(false),
             'keystone_logo_url' => $logo_url,
         ];
 
