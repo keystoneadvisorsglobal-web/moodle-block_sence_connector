@@ -1,11 +1,38 @@
-GNU GENERAL PUBLIC LICENSE
-Version 3, 29 June 2007
+KEYSTONE ADVISORS PROPRIETARY FREEWARE LICENSE
+Versión 1.0 (2026)
 
-Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
-Everyone is permitted to copy and distribute verbatim copies
-of this license document, but changing it is not allowed.
+Copyright (C) 2026 Keystone Advisors SpA. Todos los derechos reservados.
+Sitio Web: https://www.keystoneadvisors.cl
+Contacto Legal: contacto@keystoneadvisors.cl
+Dirección: Av. Apoquindo 6410, Oficina 605, Las Condes, Santiago, Chile.
 
-Preamble
+TÉRMINOS Y CONDICIONES DE USO:
 
-The GNU General Public License is a free, copyleft license for
-software and other kinds of works.
+1. CONCESIÓN DE USO GRATUITO:
+Keystone Advisors concede a cualquier persona u organización ("Usuario") el derecho no exclusivo,
+intransferible y gratuito de instalar, ejecutar y utilizar este software exclusivamente como extensión
+de la plataforma de aprendizaje Moodle en sus propios servidores o entornos de capacitación.
+
+2. RESERVA DE DERECHOS DE AUTOR Y PROPIEDAD INTELECTUAL:
+El código fuente, arquitectura, diseño, logotipos, documentación y algoritmos contenidos en este
+software son propiedad exclusiva y confidencial de Keystone Advisors SpA. Este acuerdo no confiere
+al Usuario ningún título, derecho de propiedad ni titularidad sobre la propiedad intelectual del software.
+
+3. RESTRICCIONES ESTRICTAS:
+Queda expresamente prohibido al Usuario y a terceros:
+a) Modificar, adaptar, traducir, realizar ingeniería inversa, descompilar, desensamblar o intentar
+   derivar el código fuente del plugin sin autorización previa, expresa y por escrito de Keystone Advisors.
+b) Copiar, clonar, reproducir, sublicenciar, vender, arrendar, revender o comercializar el plugin
+   total o parcialmente.
+c) Extraer componentes, funciones o módulos para ser incorporados en otros sistemas, plataformas o plugins.
+d) Eliminar, alterar u ocultar cualquier aviso de derechos de autor, marcas comerciales, enlaces o
+   créditos de propiedad intelectual de Keystone Advisors presentes en el software.
+
+4. SIN GARANTÍA:
+El software se suministra "tal cual" (AS IS), sin garantías de ningún tipo respecto de su adaptación
+para un propósito particular o la ausencia de errores no imputables a negligencia grave.
+
+5. JURISDICCIÓN Y LEY APLICABLE:
+Cualquier controversia relacionada con el presente acuerdo o la infracción de los derechos de autor
+será resuelta bajo la legislación de la República de Chile y ante los tribunales ordinarios de justicia
+de la ciudad de Santiago de Chile.

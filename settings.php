@@ -1,30 +1,34 @@
 <?php
 // This file is part of Moodle - http://moodle.org/
 //
-// Moodle is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// @package    block_sence_connector
+// @copyright  2026 Keystone Advisors SpA (https://www.keystoneadvisors.cl)
+// @license    Proprietary / Keystone Advisors Freeware License (All Rights Reserved)
 //
-// Moodle is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
-/**
- * Site administration settings for block_sence_connector.
- *
- * @package    block_sence_connector
- * @copyright  2026 Keystone Advisors
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+// Queda prohibida la reproducción, modificación, copia o comercialización total
+// o parcial de este software sin el consentimiento expreso y por escrito de Keystone Advisors.
 
 defined('MOODLE_INTERNAL') || die();
 
 if ($ADMIN->fulltree) {
+    // Banner Legal de Propiedad Intelectual y Derechos Reservados
+    $legal_notice = html_writer::tag('div',
+        html_writer::tag('div',
+            html_writer::tag('strong', '© 2026 Keystone Advisors SpA. Todos los derechos reservados.') . '<br>' .
+            html_writer::tag('span', 'Este plugin es una solución oficial y gratuita de Keystone Advisors para Organismos Técnicos de Capacitación (OTEC). El uso de este software está sujeto a los términos de la Licencia Propietaria de Keystone Advisors. ') .
+            html_writer::tag('strong', 'Queda estrictamente prohibida la copia, clonación, ingeniería inversa, reutilización no autorizada del código o redistribución comercial sin autorización expresa por escrito.') . '<br>' .
+            html_writer::tag('small', 'Contacto legal, licencias y solicitudes de desarrollo a medida: ') .
+            html_writer::link('mailto:contacto@keystoneadvisors.cl', 'contacto@keystoneadvisors.cl', ['style' => 'font-weight: bold; color: #1a4253; text-decoration: underline;']) . ' | Av. Apoquindo 6410, Of. 605, Las Condes, Santiago.',
+            ['class' => 'alert alert-info py-3 px-4 shadow-sm mb-4', 'style' => 'background-color: #f0f7fa; border-left: 5px solid #1a4253; color: #1e293b; font-size: 0.90rem; border-radius: 8px; line-height: 1.5;']
+        )
+    );
+
+    $settings->add(new admin_setting_heading(
+        'block_sence_connector/legal_notice_header',
+        'Propiedad Intelectual y Derechos Reservados - Keystone Advisors',
+        $legal_notice
+    ));
+
     $settings->add(new admin_setting_heading(
         'block_sence_connector/header_general',
         get_string('settings_header_general', 'block_sence_connector'),

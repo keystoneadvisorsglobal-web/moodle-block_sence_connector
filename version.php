@@ -1,31 +1,17 @@
 <?php
 // This file is part of Moodle - http://moodle.org/
 //
-// Moodle is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// @package    block_sence_connector
+// @copyright  2026 Keystone Advisors SpA (https://www.keystoneadvisors.cl)
+// @license    Proprietary / Keystone Advisors Freeware License (All Rights Reserved)
 //
-// Moodle is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
-/**
- * Version details for block_sence_connector.
- *
- * @package    block_sence_connector
- * @copyright  2026 Keystone Advisors
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+// Queda prohibida la reproducción, modificación, copia o comercialización total
+// o parcial de este software sin el consentimiento expreso y por escrito de Keystone Advisors.
 
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'block_sence_connector';
-$plugin->version   = 2026101802;        // Version: YYYYMMDDXX.
+$plugin->version   = 2026101803;        // Version: YYYYMMDDXX.
 $plugin->requires  = 2022112800;        // Moodle 4.1 LTS or higher (supports 4.1 to 5.x).
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = 'v1.10.0';         // Major upgrade: Multi-Course Identification in Attendance Book & CSV Liquidation.
+$plugin->release   = 'v1.11.0';         // Major upgrade: Protected Proprietary Freeware License & Legal Rights Enforcement.
