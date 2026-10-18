@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'block_sence_connector';
-$plugin->version   = 2026101801;        // Version: YYYYMMDDXX.
+$plugin->version   = 2026101802;        // Version: YYYYMMDDXX.
 $plugin->requires  = 2022112800;        // Moodle 4.1 LTS or higher (supports 4.1 to 5.x).
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = 'v1.9.0';          // Major upgrade: In-Course Session Pause & Non-Evasive Content Guard.
+$plugin->release   = 'v1.10.0';         // Major upgrade: Multi-Course Identification in Attendance Book & CSV Liquidation.
